@@ -1,0 +1,17 @@
+# System files.
+*~
+.DS_Store
+.svn
+.cvs
+*.bak
+*.swp
+Thumbs.db
+
+# Hidden/temporary/build folders.
+.idea/
+.trash/
+.tmp/
+build/
+cache/
+node_modules/
+tmp/
