@@ -18,7 +18,6 @@
 		"url": "https://github.com/SumoTTo/configs/issues"
 	},
 	"homepage": "https://github.com/SumoTTo/configs#readme",
-	"type": "module",
 	"devDependencies": {
 		"np": "^10.0.5"
 	},
