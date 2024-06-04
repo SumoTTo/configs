@@ -13,6 +13,7 @@ const defaultConfig = new Config(
 	process.env.THEME_BLOCK_DEV_SERVER_PORT || 'auto'
 )
 	.addEntries( 'src/**/styles/*.{pc,sc,sa,c}ss' )
+	.addEntries( 'src/index.{ts,tsx}' )
 	.removePlugin( RtlCssPlugin )
 	.replacePlugin(
 		new MiniCSSExtractPlugin( {
