@@ -12,7 +12,7 @@ const defaultConfig = new Config(
 	'default',
 	process.env.THEME_BLOCK_DEV_SERVER_PORT || 'auto'
 )
-	.addEntries( 'src/**/styles/*.{pc,sc,sa,c}ss' )
+	.addEntries( 'src/blocks/**/styles/*.{pc,sc,sa,c}ss' )
 	.addEntries( 'src/index.{ts,tsx}' )
 	.removePlugin( RtlCssPlugin )
 	.replacePlugin(
