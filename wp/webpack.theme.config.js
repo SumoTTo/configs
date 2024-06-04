@@ -31,7 +31,7 @@ const defaultConfig = new Config(
 	.removePlugin( RtlCssPlugin )
 	.addPlugin(
 		new CleanWebpackPlugin( {
-			cleanOnceBeforeBuildPatterns: [ '!modules/**' ],
+			cleanOnceBeforeBuildPatterns: [ '**/*', '!modules/**' ],
 			cleanStaleWebpackAssets: false,
 		} ),
 		'before'
