@@ -4,17 +4,18 @@ const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
 const { resolve } = require( 'node:path' );
+const findFreePort = require( 'find-free-port-sync' );
 const {
 	Config,
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
 
-const defaultConfig = new Config(
-	defaultConfigWP,
-	'default',
-	process.env.THEME_DEV_SERVER_PORT || 'auto'
-)
+const port =
+	process.env.THEME_DEV_SERVER_PORT ||
+	findFreePort( { start: 10000, end: 10999 } );
+
+const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.resetEntries()
 	.addEntries(
 		'src/styles/{*.{pc,sc,sa,c}ss,{blocks,variations,patterns}/**/*.{pc,sc,sa,c}ss}'
