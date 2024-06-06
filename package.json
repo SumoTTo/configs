@@ -1,6 +1,6 @@
 {
 	"name": "@sumotto/configs",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Configs for my work",
 	"scripts": {
 		"release": "np --yolo"
