@@ -21,6 +21,10 @@
 	"devDependencies": {
 		"np": "^10.0.5"
 	},
+	"files": [
+		"helpers/*",
+		"wp/*"
+	],
 	"dependencies": {
 		"@wordpress/scripts": "^27.9.0",
 		"clean-webpack-plugin": "^4.0.0",
