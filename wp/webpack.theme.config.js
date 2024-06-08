@@ -32,7 +32,15 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.removePlugin( RtlCssPlugin )
 	.addPlugin(
 		new CleanWebpackPlugin( {
-			cleanOnceBeforeBuildPatterns: [ '**/*', '!modules/**' ],
+			cleanOnceBeforeBuildPatterns: [
+				'**/*',
+				// Each link in the path has been added, because if this is not done,
+				// the scripts will be separated since it does not fall under the condition !scripts/modules/*,
+				// and accordingly, the module files will be included with it...
+				'!scripts',
+				'!scripts/modules',
+				'!scripts/modules/*',
+			],
 			cleanStaleWebpackAssets: false,
 		} ),
 		'before'
