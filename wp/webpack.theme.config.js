@@ -140,7 +140,10 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	.resetEntries()
 	.addEntries( 'src/scripts/modules/*.{j,t}s' );
 
-const patternsConfig = new Config( { entry: {} }, 'patterns' )
+const patternsConfig = new Config(
+	{ entry: {}, mode: 'production' },
+	'patterns'
+)
 	.addPlugin(
 		new CopyWebpackPlugin( {
 			patterns: [
