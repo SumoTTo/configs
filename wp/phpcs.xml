@@ -45,6 +45,8 @@
 				<element value="wld_get_value" />
 				<element value="wld_get_attrs" />
 				<element value="wld_get_template_part" />
+				<element value="get_block_wrapper_attributes" />
+				<element value="wp_interactivity_data_wp_context" />
 			</property>
 		</properties>
 	</rule>
