@@ -83,52 +83,38 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	)
 	.addMinimizer(
 		new ImageMinimizerPlugin( {
-			minimizer: {
-				implementation: ImageMinimizerPlugin.svgoMinify,
-				options: {
-					encodeOptions: {
-						multipass: true,
-						plugins: [
-							{
-								name: 'preset-default',
-								params: {
-									overrides: {
-										removeViewBox: false,
-									},
-								},
-							},
-							{
-								name: 'addAttributesToSVGElement',
-								params: {
-									attributes: [
-										{
-											'aria-hidden': 'true',
-										},
-									],
-								},
-							},
-						],
-					},
-				},
-			},
-		} )
-	)
-	.addMinimizer(
-		new ImageMinimizerPlugin( {
-			minimizer: {
-				implementation: ImageMinimizerPlugin.sharpMinify,
-			},
-			generator: [
+			minimizer: [
 				{
-					type: 'asset',
-					preset: 'avif',
-					implementation: ImageMinimizerPlugin.sharpGenerate,
+					implementation: ImageMinimizerPlugin.svgoMinify,
 					options: {
 						encodeOptions: {
-							avif: {
-								lossless: false,
-							},
+							multipass: true,
+							plugins: [
+								{
+									name: 'preset-default',
+								},
+								{
+									name: 'addAttributesToSVGElement',
+									params: {
+										attributes: [
+											{
+												'aria-hidden': 'true',
+											},
+										],
+									},
+								},
+							],
 						},
+					},
+				},
+				{
+					implementation: ImageMinimizerPlugin.imageminMinify,
+					options: {
+						plugins: [
+							[ 'gifsicle' ],
+							[ 'jpegtran', { progressive: true } ],
+							[ 'optipng', { optimizationLevel: 5 } ],
+						],
 					},
 				},
 			],
@@ -141,7 +127,11 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	.addEntries( 'src/scripts/modules/*.{j,t}s' );
 
 const patternsConfig = new Config(
-	{ entry: {}, mode: 'production' },
+	{
+		entry: {},
+		mode: 'production',
+		output: { path: resolve( process.cwd(), 'patterns/images' ) },
+	},
 	'patterns'
 )
 	.addPlugin(
@@ -149,7 +139,7 @@ const patternsConfig = new Config(
 			patterns: [
 				{
 					from: 'src/images-for-patterns',
-					to: '../patterns/images',
+					to: './',
 					noErrorOnMissing: true,
 					globOptions: {
 						ignore: [ '**/readme.md' ],
@@ -160,47 +150,38 @@ const patternsConfig = new Config(
 	)
 	.addMinimizer(
 		new ImageMinimizerPlugin( {
-			minimizer: {
-				implementation: ImageMinimizerPlugin.svgoMinify,
-				options: {
-					encodeOptions: {
-						multipass: true,
-						plugins: [
-							{
-								name: 'preset-default',
-							},
-							{
-								name: 'addAttributesToSVGElement',
-								params: {
-									attributes: [
-										{
-											'aria-hidden': 'true',
-										},
-									],
-								},
-							},
-						],
-					},
-				},
-			},
-		} )
-	)
-	.addMinimizer(
-		new ImageMinimizerPlugin( {
-			minimizer: {
-				implementation: ImageMinimizerPlugin.sharpMinify,
-			},
-			generator: [
+			minimizer: [
 				{
-					type: 'asset',
-					preset: 'avif',
-					implementation: ImageMinimizerPlugin.sharpGenerate,
+					implementation: ImageMinimizerPlugin.svgoMinify,
 					options: {
 						encodeOptions: {
-							avif: {
-								lossless: false,
-							},
+							multipass: true,
+							plugins: [
+								{
+									name: 'preset-default',
+								},
+								{
+									name: 'addAttributesToSVGElement',
+									params: {
+										attributes: [
+											{
+												'aria-hidden': 'true',
+											},
+										],
+									},
+								},
+							],
 						},
+					},
+				},
+				{
+					implementation: ImageMinimizerPlugin.imageminMinify,
+					options: {
+						plugins: [
+							[ 'gifsicle', { interlaced: true } ],
+							[ 'jpegtran', { progressive: true } ],
+							[ 'optipng', { optimizationLevel: 5 } ],
+						],
 					},
 				},
 			],
