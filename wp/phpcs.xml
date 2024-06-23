@@ -23,6 +23,8 @@
 		<properties>
 			<property name="text_domain" type="array">
 				<element value="theme" />
+				<element value="the-modifications" />
+				<element value="the-builder" />
 				<element value="woocommerce" />
 				<element value="default" />
 			</property>
