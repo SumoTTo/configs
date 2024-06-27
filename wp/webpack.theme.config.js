@@ -58,25 +58,21 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 					from: 'src/fonts',
 					to: 'fonts',
 					noErrorOnMissing: true,
-					globOptions: {
-						ignore: [ '**/readme.md' ],
-					},
+				},
+				{
+					from: 'src/images',
+					to: 'images',
+					noErrorOnMissing: true,
 				},
 				{
 					from: 'src/social-icons',
 					to: 'social-icons',
 					noErrorOnMissing: true,
-					globOptions: {
-						ignore: [ '**/readme.md' ],
-					},
 				},
 				{
 					from: 'src/menu-icons',
 					to: 'menu-icons',
 					noErrorOnMissing: true,
-					globOptions: {
-						ignore: [ '**/readme.md' ],
-					},
 				},
 			],
 		} )
@@ -92,6 +88,11 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 							plugins: [
 								{
 									name: 'preset-default',
+									params: {
+										overrides: {
+											removeViewBox: false,
+										},
+									},
 								},
 								{
 									name: 'addAttributesToSVGElement',
@@ -105,16 +106,6 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 								},
 							],
 						},
-					},
-				},
-				{
-					implementation: ImageMinimizerPlugin.imageminMinify,
-					options: {
-						plugins: [
-							[ 'gifsicle' ],
-							[ 'jpegtran', { progressive: true } ],
-							[ 'optipng', { optimizationLevel: 5 } ],
-						],
 					},
 				},
 			],
@@ -126,70 +117,4 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	.resetEntries()
 	.addEntries( 'src/scripts/modules/*.{j,t}s' );
 
-const patternsConfig = new Config(
-	{
-		entry: {},
-		mode: 'production',
-		output: { path: resolve( process.cwd(), 'patterns/images' ) },
-	},
-	'patterns'
-)
-	.addPlugin(
-		new CopyWebpackPlugin( {
-			patterns: [
-				{
-					from: 'src/images-for-patterns',
-					to: './',
-					noErrorOnMissing: true,
-					globOptions: {
-						ignore: [ '**/readme.md' ],
-					},
-				},
-			],
-		} )
-	)
-	.addMinimizer(
-		new ImageMinimizerPlugin( {
-			minimizer: [
-				{
-					implementation: ImageMinimizerPlugin.svgoMinify,
-					options: {
-						encodeOptions: {
-							multipass: true,
-							plugins: [
-								{
-									name: 'preset-default',
-								},
-								{
-									name: 'addAttributesToSVGElement',
-									params: {
-										attributes: [
-											{
-												'aria-hidden': 'true',
-											},
-										],
-									},
-								},
-							],
-						},
-					},
-				},
-				{
-					implementation: ImageMinimizerPlugin.imageminMinify,
-					options: {
-						plugins: [
-							[ 'gifsicle', { interlaced: true } ],
-							[ 'jpegtran', { progressive: true } ],
-							[ 'optipng', { optimizationLevel: 5 } ],
-						],
-					},
-				},
-			],
-		} )
-	);
-
-module.exports = [
-	defaultConfig.get(),
-	modulesConfig.get(),
-	patternsConfig.get(),
-];
+module.exports = [ defaultConfig.get(), modulesConfig.get() ];
