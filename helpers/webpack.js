@@ -56,6 +56,32 @@ module.exports.Config = class {
 	constructor( config, name, port = 'auto' ) {
 		this.config = config;
 		this.config.name = name;
+		this.entries = {};
+		this.entriesFunctions = [];
+
+		if ( typeof this.config.entry === 'function' ) {
+			this.entriesFunctions.push( this.config.entry );
+		} else {
+			this.entries = {
+				...this.config.entry,
+			};
+		}
+
+		this.config.entry = () => {
+			let entries = {};
+
+			for ( const entriesFunction of this.entriesFunctions ) {
+				entries = {
+					...entries,
+					...entriesFunction(),
+				};
+			}
+
+			return {
+				...this.entries,
+				...entries,
+			};
+		};
 
 		if ( config.devServer ) {
 			// noinspection JSUnusedGlobalSymbols
@@ -90,23 +116,14 @@ module.exports.Config = class {
 	}
 
 	resetEntries() {
-		this.config.entry = {};
+		this.entries = {};
+		this.entriesFunctions = [];
 
 		return this;
 	}
 
 	addEntries( globPattern ) {
-		if ( typeof this.config.entry === 'function' ) {
-			this.config.entry = {
-				...this.config.entry(),
-				...getEntries( globPattern ),
-			};
-		} else {
-			this.config.entry = {
-				...this.config.entry,
-				...getEntries( globPattern ),
-			};
-		}
+		this.entriesFunctions.push( () => getEntries( globPattern ) );
 
 		return this;
 	}

@@ -1,8 +1,9 @@
 const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
-const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
+const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const findFreePort = require( 'find-free-port-sync' );
+const { resolve } = require( 'node:path' );
 const {
 	Config,
 	defaultConfigWP,
@@ -28,28 +29,126 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 		} )
 	)
 	.addPlugin(
-		new CleanWebpackPlugin( {
-			cleanOnceBeforeBuildPatterns: [
-				'**/*',
-				// Each link in the path has been added, because if this is not done,
-				// the scripts will be separated since it does not fall under the condition !blocks/*/scripts/module.*,
-				// and accordingly, the module files will be included with it...
-				'!blocks',
-				'!blocks/*',
-				'!blocks/*/scripts',
-				'!blocks/*/scripts/module.*',
-			],
-			cleanStaleWebpackAssets: false,
-		} ),
-		'before'
-	)
-	.addPlugin(
-		// For styles remove JS and styles .asset.php
-		new RemoveEmptyScriptsPlugin( {
-			enabled: ! Config.hasDevServer( defaultConfigWP ),
+		new FileManagerPlugin( {
+			events: {
+				onStart: {
+					delete: [
+						{
+							source: './build/*',
+							options: {
+								ignore: '**/module.*',
+							},
+						},
+					],
+				},
+			},
+			runOnceInWatchMode: true,
 		} )
 	);
 
-const modulesConfig = new Config( modulesConfigWP, 'modules' );
+if ( ! Config.hasDevServer( defaultConfigWP ) ) {
+	defaultConfig.addPlugin(
+		// For styles remove JS and styles .asset.php
+		new RemoveEmptyScriptsPlugin()
+	);
+} else {
+	defaultConfig.addWatch( 'src/blocks/*/scripts/module.{j,t}s' );
+}
+
+const modulesConfig = new Config( modulesConfigWP, 'modules' ).addPlugin(
+	new FileManagerPlugin( {
+		events: {
+			onStart: {
+				delete: [
+					{
+						source: '**/module.*',
+						options: {},
+					},
+				],
+			},
+		},
+		runOnceInWatchMode: true,
+	} )
+);
+
+if ( process.env.WP_CONTENT_DIR ) {
+	defaultConfig
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onStart: {
+						delete: [
+							{
+								source: resolve(
+									process.env.WP_CONTENT_DIR,
+									'plugins/theme-blocks'
+								),
+								options: {
+									force: true,
+								},
+							},
+						],
+					},
+				},
+				runOnceInWatchMode: true,
+			} )
+		)
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onEnd: {
+						copy: [
+							{
+								source: '**/*',
+								destination: resolve(
+									process.env.WP_CONTENT_DIR,
+									'plugins/theme-blocks'
+								),
+							},
+						],
+					},
+				},
+			} )
+		);
+
+	modulesConfig
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onStart: {
+						delete: [
+							{
+								source: resolve(
+									process.env.WP_CONTENT_DIR,
+									'plugins/theme-blocks'
+								),
+								options: {
+									force: true,
+								},
+							},
+						],
+					},
+				},
+				runOnceInWatchMode: true,
+			} )
+		)
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onEnd: {
+						copy: [
+							{
+								source: '**/*',
+								destination: resolve(
+									process.env.WP_CONTENT_DIR,
+									'plugins/theme-blocks'
+								),
+							},
+						],
+					},
+				},
+			} )
+		);
+}
 
 module.exports = [ defaultConfig.get(), modulesConfig.get() ];

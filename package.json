@@ -26,10 +26,10 @@
 		"wp/*"
 	],
 	"dependencies": {
-		"@wordpress/scripts": "^28.1.0",
-		"clean-webpack-plugin": "^4.0.0",
+		"@wordpress/scripts": "^28.2.0",
 		"copy-webpack-plugin": "^12.0.2",
 		"dotenv": "^16.4.5",
+		"filemanager-webpack-plugin": "^8.0.0",
 		"find-free-port-sync": "^1.0.0",
 		"glob": "^10.4.2",
 		"image-minimizer-webpack-plugin": "^4.0.2",

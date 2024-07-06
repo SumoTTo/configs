@@ -1,8 +1,8 @@
-const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
+const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const { resolve } = require( 'node:path' );
 const findFreePort = require( 'find-free-port-sync' );
 const {
@@ -10,6 +10,7 @@ const {
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
+const root = process.cwd();
 
 const port =
 	process.env.THEME_DEV_SERVER_PORT ||
@@ -20,10 +21,8 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.addEntries(
 		'src/styles/{*.{pc,sc,sa,c}ss,{blocks,variations,patterns}/**/*.{pc,sc,sa,c}ss}'
 	)
-	.addEntries( 'src/scripts/*.{j,t}s' )
 	.changeRule( '/\\.(sc|sa)ss$/', ( rule ) => {
 		const last = rule.use.length - 1;
-		const root = process.cwd();
 
 		rule.use[ last ].options.sassOptions = {
 			includePaths: [ resolve( root, 'src/styles/partials' ) ],
@@ -31,19 +30,21 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	} )
 	.removePlugin( RtlCssPlugin )
 	.addPlugin(
-		new CleanWebpackPlugin( {
-			cleanOnceBeforeBuildPatterns: [
-				'**/*',
-				// Each link in the path has been added, because if this is not done,
-				// the scripts will be separated since it does not fall under the condition !scripts/modules/*,
-				// and accordingly, the module files will be included with it...
-				'!scripts',
-				'!scripts/modules',
-				'!scripts/modules/*',
-			],
-			cleanStaleWebpackAssets: false,
-		} ),
-		'before'
+		new FileManagerPlugin( {
+			events: {
+				onStart: {
+					delete: [
+						{
+							source: './build/*',
+							options: {
+								ignore: './build/scripts/modules/**/*',
+							},
+						},
+					],
+				},
+			},
+			runOnceInWatchMode: true,
+		} )
 	)
 	.addPlugin(
 		// For styles remove JS and styles .asset.php
@@ -110,11 +111,105 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 				},
 			],
 		} )
-	)
-	.addWatch( 'src/scripts/modules/*' );
+	);
 
 const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	.resetEntries()
-	.addEntries( 'src/scripts/modules/*.{j,t}s' );
+	.addEntries( 'src/scripts/modules/*.{j,t}s' )
+	.addPlugin(
+		new FileManagerPlugin( {
+			events: {
+				onStart: {
+					delete: [
+						{
+							source: './build/scripts/modules/*',
+							options: {},
+						},
+					],
+				},
+			},
+			runOnceInWatchMode: true,
+		} )
+	);
+
+if ( process.env.WP_CONTENT_DIR ) {
+	defaultConfig
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onStart: {
+						delete: [
+							{
+								source: resolve(
+									process.env.WP_CONTENT_DIR,
+									'themes/theme-child'
+								),
+								options: {
+									force: true,
+								},
+							},
+						],
+					},
+				},
+				runOnceInWatchMode: true,
+			} )
+		)
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onEnd: {
+						copy: [
+							{
+								source: '**/*',
+								destination: resolve(
+									process.env.WP_CONTENT_DIR,
+									'themes/theme-child'
+								),
+							},
+						],
+					},
+				},
+			} )
+		);
+
+	modulesConfig
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onStart: {
+						delete: [
+							{
+								source: resolve(
+									process.env.WP_CONTENT_DIR,
+									'themes/theme-child'
+								),
+								options: {
+									force: true,
+								},
+							},
+						],
+					},
+				},
+				runOnceInWatchMode: true,
+			} )
+		)
+		.addPlugin(
+			new FileManagerPlugin( {
+				events: {
+					onEnd: {
+						copy: [
+							{
+								source: '**/*',
+								destination: resolve(
+									process.env.WP_CONTENT_DIR,
+									'themes/theme-child'
+								),
+							},
+						],
+					},
+				},
+			} )
+		);
+}
 
 module.exports = [ defaultConfig.get(), modulesConfig.get() ];
