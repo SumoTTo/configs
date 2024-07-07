@@ -2,6 +2,7 @@ const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
+const SyncDirectoryWebpackPlugin = require( '../helpers/sync-directory-webpack-plugin' );
 const findFreePort = require( 'find-free-port-sync' );
 const { resolve } = require( 'node:path' );
 const {
@@ -9,6 +10,7 @@ const {
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
+const root = process.cwd().replace( /\\/g, '/' );
 
 const port =
 	process.env.THEME_BLOCK_DEV_SERVER_PORT ||
@@ -72,83 +74,16 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' ).addPlugin(
 );
 
 if ( process.env.WP_CONTENT_DIR ) {
-	defaultConfig
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onStart: {
-						delete: [
-							{
-								source: resolve(
-									process.env.WP_CONTENT_DIR,
-									'plugins/theme-blocks'
-								),
-								options: {
-									force: true,
-								},
-							},
-						],
-					},
-				},
-				runOnceInWatchMode: true,
-			} )
-		)
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onEnd: {
-						copy: [
-							{
-								source: '**/*',
-								destination: resolve(
-									process.env.WP_CONTENT_DIR,
-									'plugins/theme-blocks'
-								),
-							},
-						],
-					},
-				},
-			} )
-		);
+	const syncDirectory = new SyncDirectoryWebpackPlugin( {
+		sourceDir: root,
+		targetDir: resolve(
+			process.env.WP_CONTENT_DIR,
+			'plugins/theme-blocks'
+		),
+	} );
 
-	modulesConfig
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onStart: {
-						delete: [
-							{
-								source: resolve(
-									process.env.WP_CONTENT_DIR,
-									'plugins/theme-blocks'
-								),
-								options: {
-									force: true,
-								},
-							},
-						],
-					},
-				},
-				runOnceInWatchMode: true,
-			} )
-		)
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onEnd: {
-						copy: [
-							{
-								source: '**/*',
-								destination: resolve(
-									process.env.WP_CONTENT_DIR,
-									'plugins/theme-blocks'
-								),
-							},
-						],
-					},
-				},
-			} )
-		);
+	defaultConfig.addPlugin( syncDirectory );
+	modulesConfig.addPlugin( syncDirectory );
 }
 
 module.exports = [ defaultConfig.get(), modulesConfig.get() ];

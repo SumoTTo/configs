@@ -2,15 +2,16 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
+const SyncDirectoryWebpackPlugin = require( '../helpers/sync-directory-webpack-plugin' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
-const { resolve } = require( 'node:path' );
 const findFreePort = require( 'find-free-port-sync' );
+const { resolve } = require( 'node:path' );
 const {
 	Config,
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
-const root = process.cwd();
+const root = process.cwd().replace( /\\/g, '/' );
 
 const port =
 	process.env.THEME_DEV_SERVER_PORT ||
@@ -21,6 +22,7 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.addEntries(
 		'src/styles/{*.{pc,sc,sa,c}ss,{blocks,variations,patterns}/**/*.{pc,sc,sa,c}ss}'
 	)
+	.addEntries( 'src/scripts/*.{j,t}s' )
 	.changeRule( '/\\.(sc|sa)ss$/', ( rule ) => {
 		const last = rule.use.length - 1;
 
@@ -133,83 +135,13 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	);
 
 if ( process.env.WP_CONTENT_DIR ) {
-	defaultConfig
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onStart: {
-						delete: [
-							{
-								source: resolve(
-									process.env.WP_CONTENT_DIR,
-									'themes/theme-child'
-								),
-								options: {
-									force: true,
-								},
-							},
-						],
-					},
-				},
-				runOnceInWatchMode: true,
-			} )
-		)
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onEnd: {
-						copy: [
-							{
-								source: '**/*',
-								destination: resolve(
-									process.env.WP_CONTENT_DIR,
-									'themes/theme-child'
-								),
-							},
-						],
-					},
-				},
-			} )
-		);
+	const syncDirectory = new SyncDirectoryWebpackPlugin( {
+		sourceDir: root,
+		targetDir: resolve( process.env.WP_CONTENT_DIR, 'themes/theme-child' ),
+	} );
 
-	modulesConfig
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onStart: {
-						delete: [
-							{
-								source: resolve(
-									process.env.WP_CONTENT_DIR,
-									'themes/theme-child'
-								),
-								options: {
-									force: true,
-								},
-							},
-						],
-					},
-				},
-				runOnceInWatchMode: true,
-			} )
-		)
-		.addPlugin(
-			new FileManagerPlugin( {
-				events: {
-					onEnd: {
-						copy: [
-							{
-								source: '**/*',
-								destination: resolve(
-									process.env.WP_CONTENT_DIR,
-									'themes/theme-child'
-								),
-							},
-						],
-					},
-				},
-			} )
-		);
+	defaultConfig.addPlugin( syncDirectory );
+	modulesConfig.addPlugin( syncDirectory );
 }
 
 module.exports = [ defaultConfig.get(), modulesConfig.get() ];
