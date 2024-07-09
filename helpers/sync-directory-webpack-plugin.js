@@ -5,7 +5,10 @@ class SyncDirectoryWebpackPlugin {
 		this.sourceDir = options.sourceDir;
 		this.targetDir = options.targetDir;
 		this.watcher = syncDirectory( this.sourceDir, this.targetDir, {
+			skipInitialSync: false,
 			watch: true,
+			deleteOrphaned: true,
+			exclude: 'node_modules',
 		} );
 	}
 
