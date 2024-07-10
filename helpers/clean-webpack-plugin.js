@@ -1,4 +1,4 @@
-const { globbySync } = require( 'globby' );
+const globby = require( 'globby' );
 const rimraf = require( 'rimraf' );
 
 let isRunning = false;
@@ -12,11 +12,11 @@ class CleanWebpackPlugin {
 
 	// noinspection JSUnusedGlobalSymbols
 	apply( compiler ) {
-		compiler.hooks.beforeRun.tap( 'SumoTToCleanWebpackPlugin', async () => {
+		compiler.hooks.beforeRun.tap( 'SumoTToCleanWebpackPlugin', () => {
 			this.del();
 		} );
 
-		compiler.hooks.watchRun.tap( 'SumoTToCleanWebpackPlugin', async () => {
+		compiler.hooks.watchRun.tap( 'SumoTToCleanWebpackPlugin', () => {
 			if ( isRunning ) {
 				return;
 			}
@@ -28,7 +28,7 @@ class CleanWebpackPlugin {
 	}
 
 	del() {
-		globbySync( this.patterns ).forEach( ( file ) => {
+		globby.sync( this.patterns ).forEach( ( file ) => {
 			rimraf.sync( file, { glob: false } );
 		} );
 	}
