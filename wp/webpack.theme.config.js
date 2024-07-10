@@ -3,7 +3,7 @@ const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
 const SyncDirectoryWebpackPlugin = require( '../helpers/sync-directory-webpack-plugin' );
-const { CleanWebpackPlugin } = require( '../helpers/clean-webpack-plugin' );
+const CleanWebpackPlugin = require( '../helpers/clean-webpack-plugin' );
 const findFreePort = require( 'find-free-port-sync' );
 const { resolve } = require( 'node:path' );
 const {
