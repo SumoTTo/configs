@@ -11,7 +11,10 @@ const {
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
-const root = process.cwd().replace( /\\/g, '/' );
+const rootPath = process.cwd().replace( /\\/g, '/' );
+const outputPath = process.env.WP_CONTENT_DIR
+	? resolve( process.env.WP_CONTENT_DIR, 'themes/theme-child' )
+	: rootPath;
 
 const port =
 	process.env.THEME_DEV_SERVER_PORT ||
@@ -27,22 +30,15 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 		const last = rule.use.length - 1;
 
 		rule.use[ last ].options.sassOptions = {
-			includePaths: [ resolve( root, 'src/styles/partials' ) ],
+			includePaths: [ resolve( rootPath, 'src/styles/partials' ) ],
 		};
 	} )
 	.removePlugin( RtlCssPlugin )
 	.addPlugin(
 		new CleanWebpackPlugin( {
 			patterns: [
-				resolve(
-					process.env.WP_CONTENT_DIR,
-					'themes/theme-child/build/**/*'
-				),
-				'!' +
-					resolve(
-						process.env.WP_CONTENT_DIR,
-						'themes/theme-child/build/modules/**/*'
-					),
+				resolve( outputPath, 'build/**/*' ),
+				'!' + resolve( outputPath, 'build/modules/**/*' ),
 			],
 		} )
 	)
@@ -118,26 +114,18 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	.addEntries( 'src/scripts/modules/*.{j,t}s' )
 	.addPlugin(
 		new CleanWebpackPlugin( {
-			patterns: [
-				resolve(
-					process.env.WP_CONTENT_DIR,
-					'themes/theme-child/build/scripts/modules/**/*'
-				),
-			],
+			patterns: [ resolve( outputPath, '/build/scripts/modules/**/*' ) ],
 		} )
 	);
 
 if ( process.env.WP_CONTENT_DIR ) {
-	const buildPath = resolve(
-		process.env.WP_CONTENT_DIR,
-		'themes/theme-child/build'
-	);
+	const buildPath = resolve( outputPath, 'build' );
 	defaultConfigWP.output.path = buildPath;
 	modulesConfigWP.output.path = buildPath;
 
 	const syncDirectory = new SyncDirectoryWebpackPlugin( {
-		sourceDir: root,
-		targetDir: resolve( process.env.WP_CONTENT_DIR, 'themes/theme-child' ),
+		sourceDir: rootPath,
+		targetDir: outputPath,
 		exclude: [ '/build/' ],
 	} );
 

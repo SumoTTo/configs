@@ -10,7 +10,10 @@ const {
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
-const root = process.cwd().replace( /\\/g, '/' );
+const rootPath = process.cwd().replace( /\\/g, '/' );
+const outputPath = process.env.WP_CONTENT_DIR
+	? resolve( process.env.WP_CONTENT_DIR, 'plugins/theme-blocks' )
+	: rootPath;
 
 const port =
 	process.env.THEME_BLOCK_DEV_SERVER_PORT ||
@@ -33,15 +36,8 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.addPlugin(
 		new CleanWebpackPlugin( {
 			patterns: [
-				resolve(
-					process.env.WP_CONTENT_DIR,
-					'plugins/theme-blocks/build/**/*'
-				),
-				'!' +
-					resolve(
-						process.env.WP_CONTENT_DIR,
-						'plugins/theme-blocks/build/**/module.*'
-					),
+				resolve( outputPath, 'build/**/*' ),
+				'!' + resolve( outputPath, 'build/**/module.*' ),
 			],
 		} )
 	);
@@ -55,29 +51,18 @@ if ( ! Config.hasDevServer( defaultConfigWP ) ) {
 
 const modulesConfig = new Config( modulesConfigWP, 'modules' ).addPlugin(
 	new CleanWebpackPlugin( {
-		patterns: [
-			resolve(
-				process.env.WP_CONTENT_DIR,
-				'plugins/theme-blocks/build/**/module.*'
-			),
-		],
+		patterns: [ resolve( outputPath, 'build/**/module.*' ) ],
 	} )
 );
 
 if ( process.env.WP_CONTENT_DIR ) {
-	const buildPath = resolve(
-		process.env.WP_CONTENT_DIR,
-		'plugins/theme-blocks/build'
-	);
+	const buildPath = resolve( outputPath, 'build' );
 	defaultConfigWP.output.path = buildPath;
 	modulesConfigWP.output.path = buildPath;
 
 	const syncDirectory = new SyncDirectoryWebpackPlugin( {
-		sourceDir: root,
-		targetDir: resolve(
-			process.env.WP_CONTENT_DIR,
-			'plugins/theme-blocks'
-		),
+		sourceDir: rootPath,
+		targetDir: outputPath,
 		exclude: [ /build/ ],
 	} );
 
