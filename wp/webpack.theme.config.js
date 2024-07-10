@@ -3,7 +3,7 @@ const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
 const SyncDirectoryWebpackPlugin = require( '../helpers/sync-directory-webpack-plugin' );
-const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
+const { CleanWebpackPlugin } = require( '../helpers/clean-webpack-plugin' );
 const findFreePort = require( 'find-free-port-sync' );
 const { resolve } = require( 'node:path' );
 const {
@@ -32,20 +32,18 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	} )
 	.removePlugin( RtlCssPlugin )
 	.addPlugin(
-		new FileManagerPlugin( {
-			events: {
-				onStart: {
-					delete: [
-						{
-							source: './build/*',
-							options: {
-								ignore: './build/scripts/modules/**/*',
-							},
-						},
-					],
-				},
-			},
-			runOnceInWatchMode: true,
+		new CleanWebpackPlugin( {
+			patterns: [
+				resolve(
+					process.env.WP_CONTENT_DIR,
+					'themes/theme-child/build/**/*'
+				),
+				'!' +
+					resolve(
+						process.env.WP_CONTENT_DIR,
+						'themes/theme-child/build/modules/**/*'
+					),
+			],
 		} )
 	)
 	.addPlugin(
@@ -119,25 +117,28 @@ const modulesConfig = new Config( modulesConfigWP, 'modules' )
 	.resetEntries()
 	.addEntries( 'src/scripts/modules/*.{j,t}s' )
 	.addPlugin(
-		new FileManagerPlugin( {
-			events: {
-				onStart: {
-					delete: [
-						{
-							source: './build/scripts/modules/*',
-							options: {},
-						},
-					],
-				},
-			},
-			runOnceInWatchMode: true,
+		new CleanWebpackPlugin( {
+			patterns: [
+				resolve(
+					process.env.WP_CONTENT_DIR,
+					'themes/theme-child/build/scripts/modules/**/*'
+				),
+			],
 		} )
 	);
 
 if ( process.env.WP_CONTENT_DIR ) {
+	const buildPath = resolve(
+		process.env.WP_CONTENT_DIR,
+		'themes/theme-child/build'
+	);
+	defaultConfigWP.output.path = buildPath;
+	modulesConfigWP.output.path = buildPath;
+
 	const syncDirectory = new SyncDirectoryWebpackPlugin( {
 		sourceDir: root,
 		targetDir: resolve( process.env.WP_CONTENT_DIR, 'themes/theme-child' ),
+		exclude: [ '/build/' ],
 	} );
 
 	defaultConfig.addPlugin( syncDirectory );

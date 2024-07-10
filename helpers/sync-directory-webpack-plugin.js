@@ -8,7 +8,7 @@ class SyncDirectoryWebpackPlugin {
 			skipInitialSync: false,
 			watch: true,
 			deleteOrphaned: true,
-			exclude: 'node_modules',
+			exclude: [ ...( options.exclude || [] ), 'node_modules' ],
 		} );
 	}
 

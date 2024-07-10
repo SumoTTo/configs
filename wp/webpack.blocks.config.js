@@ -1,7 +1,6 @@
 const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
-const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const SyncDirectoryWebpackPlugin = require( '../helpers/sync-directory-webpack-plugin' );
 const findFreePort = require( 'find-free-port-sync' );
 const { resolve } = require( 'node:path' );
@@ -10,6 +9,7 @@ const {
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
+const { CleanWebpackPlugin } = require( '../helpers/clean-webpack-plugin' );
 const root = process.cwd().replace( /\\/g, '/' );
 
 const port =
@@ -31,20 +31,18 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 		} )
 	)
 	.addPlugin(
-		new FileManagerPlugin( {
-			events: {
-				onStart: {
-					delete: [
-						{
-							source: './build/*',
-							options: {
-								ignore: '**/module.*',
-							},
-						},
-					],
-				},
-			},
-			runOnceInWatchMode: true,
+		new CleanWebpackPlugin( {
+			patterns: [
+				resolve(
+					process.env.WP_CONTENT_DIR,
+					'plugins/theme-blocks/build/**/*'
+				),
+				'!' +
+					resolve(
+						process.env.WP_CONTENT_DIR,
+						'plugins/theme-blocks/build/**/module.*'
+					),
+			],
 		} )
 	);
 
@@ -53,33 +51,34 @@ if ( ! Config.hasDevServer( defaultConfigWP ) ) {
 		// For styles remove JS and styles .asset.php
 		new RemoveEmptyScriptsPlugin()
 	);
-} else {
-	defaultConfig.addWatch( 'src/blocks/*/scripts/module.{j,t}s' );
 }
 
 const modulesConfig = new Config( modulesConfigWP, 'modules' ).addPlugin(
-	new FileManagerPlugin( {
-		events: {
-			onStart: {
-				delete: [
-					{
-						source: '**/module.*',
-						options: {},
-					},
-				],
-			},
-		},
-		runOnceInWatchMode: true,
+	new CleanWebpackPlugin( {
+		patterns: [
+			resolve(
+				process.env.WP_CONTENT_DIR,
+				'plugins/theme-blocks/build/**/module.*'
+			),
+		],
 	} )
 );
 
 if ( process.env.WP_CONTENT_DIR ) {
+	const buildPath = resolve(
+		process.env.WP_CONTENT_DIR,
+		'plugins/theme-blocks/build'
+	);
+	defaultConfigWP.output.path = buildPath;
+	modulesConfigWP.output.path = buildPath;
+
 	const syncDirectory = new SyncDirectoryWebpackPlugin( {
 		sourceDir: root,
 		targetDir: resolve(
 			process.env.WP_CONTENT_DIR,
 			'plugins/theme-blocks'
 		),
+		exclude: [ /build/ ],
 	} );
 
 	defaultConfig.addPlugin( syncDirectory );

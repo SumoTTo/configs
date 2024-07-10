@@ -22,6 +22,7 @@ const [
 
 function getEntryName( entryPath ) {
 	const entryData = path.parse( entryPath );
+
 	return path
 		.normalize(
 			path.join(
@@ -54,7 +55,7 @@ module.exports.modulesConfigWP = modulesConfigWP;
 
 module.exports.Config = class {
 	constructor( config, name, port = 'auto' ) {
-		this.config = config;
+		this.config = { ...config };
 		this.config.name = name;
 		this.entries = {};
 		this.entriesFunctions = [];
