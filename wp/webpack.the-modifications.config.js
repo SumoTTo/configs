@@ -68,18 +68,19 @@ modulesConfig.entry = {
 defaultConfig.name = 'default';
 modulesConfig.name = 'modules';
 
-defaultConfig.output.path = path.resolve( __dirname, 'build/scripts' );
-modulesConfig.output.path = path.resolve( __dirname, 'build/modules' );
+defaultConfig.output.path = path.resolve( process.cwd(), 'build/scripts' );
+modulesConfig.output.path = path.resolve( process.cwd(), 'build/modules' );
 
 const reactJSXRuntimeConfig = {
 	name: 'react',
+	mode: defaultConfig.mode,
 	entry: {
 		'react-jsx-runtime': {
 			import: 'react/jsx-runtime',
 		},
 	},
 	output: {
-		path: path.resolve( __dirname, 'build/polyfill' ),
+		path: path.resolve( process.cwd(), 'build/polyfill' ),
 		filename: 'react-jsx-runtime.js',
 		library: {
 			name: 'ReactJSXRuntime',
