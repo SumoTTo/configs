@@ -38,7 +38,7 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 		new CleanWebpackPlugin( {
 			patterns: [
 				resolve( outputPath, 'build/**/*' ),
-				'!' + resolve( outputPath, 'build/modules/**/*' ),
+				'!' + resolve( outputPath, 'build/scripts/modules/**/*' ),
 			],
 		} )
 	)
@@ -126,7 +126,7 @@ if ( process.env.WP_CONTENT_DIR ) {
 	const syncDirectory = new SyncDirectoryWebpackPlugin( {
 		sourceDir: rootPath,
 		targetDir: outputPath,
-		exclude: [ '/build/' ],
+		exclude: [ /[\/\\]build[\/\\]/ ],
 	} );
 
 	defaultConfig.addPlugin( syncDirectory );

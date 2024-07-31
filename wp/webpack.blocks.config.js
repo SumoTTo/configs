@@ -21,7 +21,7 @@ const port =
 
 const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.addEntries( 'src/blocks/**/styles/*.{pc,sc,sa,c}ss' )
-	.addEntries( 'src/index.{ts,tsx}' )
+	.addEntries( 'src/*.{ts,tsx}' )
 	.removePlugin( RtlCssPlugin )
 	.replacePlugin(
 		new MiniCSSExtractPlugin( {
@@ -63,7 +63,7 @@ if ( process.env.WP_CONTENT_DIR ) {
 	const syncDirectory = new SyncDirectoryWebpackPlugin( {
 		sourceDir: rootPath,
 		targetDir: outputPath,
-		exclude: [ /build/ ],
+		exclude: [ /[\/\\]build[\/\\]/ ],
 	} );
 
 	defaultConfig.addPlugin( syncDirectory );
