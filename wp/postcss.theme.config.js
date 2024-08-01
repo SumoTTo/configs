@@ -1,3 +1,5 @@
+const { resolve } = require( 'node:path' );
+
 module.exports = ( api ) => {
 	const isProduction = api.mode === 'production';
 
@@ -6,14 +8,7 @@ module.exports = ( api ) => {
 		sourceMap: ! isProduction,
 		plugins: [
 			[ 'autoprefixer', { grid: true } ],
-			[
-				'postcss-increase-specificity',
-				{
-					repeat: 1,
-					overrideIds: false,
-					stackableRoot: ':is(.is-root-container,.wp-site-blocks)',
-				},
-			],
+			[ require( resolve( __dirname, '../postcss/wrap-selector.js' ) ) ],
 			isProduction && [
 				'cssnano',
 				{
