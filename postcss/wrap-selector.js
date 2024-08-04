@@ -18,6 +18,14 @@ const plugin = () => {
 	return {
 		postcssPlugin: 'postcss-wrap-selector',
 		Rule( rule ) {
+			if (
+				rule.parent &&
+				rule.parent.type === 'atrule' &&
+				rule.parent.name === 'keyframes'
+			) {
+				return;
+			}
+
 			rule.selectors = rule.selectors.map( wrap );
 		},
 	};
