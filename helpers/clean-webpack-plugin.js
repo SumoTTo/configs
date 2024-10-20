@@ -1,4 +1,4 @@
-const globby = require( 'globby' );
+const glob = require( 'glob' );
 const rimraf = require( 'rimraf' );
 
 let isRunning = false;
@@ -28,7 +28,7 @@ class CleanWebpackPlugin {
 	}
 
 	del() {
-		globby.sync( this.patterns ).forEach( ( file ) => {
+		glob.sync( this.patterns ).forEach( ( file ) => {
 			rimraf.sync( file, { glob: false } );
 		} );
 	}
