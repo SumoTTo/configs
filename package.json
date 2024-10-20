@@ -3,7 +3,8 @@
 	"version": "0.0.26",
 	"description": "Configs for my work",
 	"scripts": {
-		"release": "np --yolo"
+		"release": "np --yolo",
+		"update": "npx npm-check-updates --interactive"
 	},
 	"repository": {
 		"type": "git",
@@ -27,14 +28,14 @@
 		"wp/*"
 	],
 	"dependencies": {
-		"@wordpress/scripts": "^28.5.0",
+		"@wordpress/scripts": "^30.3.0",
 		"copy-webpack-plugin": "^12.0.2",
 		"dotenv": "^16.4.5",
 		"find-free-port-sync": "^1.0.0",
 		"glob": "^11.0.0",
 		"globby": "^14.0.2",
 		"image-minimizer-webpack-plugin": "^4.1.0",
-		"mini-css-extract-plugin": "^2.9.0",
+		"mini-css-extract-plugin": "^2.9.1",
 		"rimraf": "^6.0.1",
 		"rtlcss-webpack-plugin": "^4.0.7",
 		"svgo": "^3.3.2",
