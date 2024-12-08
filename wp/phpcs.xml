@@ -25,6 +25,7 @@
 				<element value="theme" />
 				<element value="the-modifications" />
 				<element value="the-builder" />
+				<element value="the-woocommerce" />
 				<element value="woocommerce" />
 				<element value="default" />
 			</property>
