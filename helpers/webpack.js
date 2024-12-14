@@ -67,6 +67,11 @@ module.exports.Config = class {
 		this.entries = {};
 		this.entriesFunctions = [];
 
+		this.config.stats = 'minimal';
+		this.config.performance = {
+			maxAssetSize: 1048576, // 1MB
+		};
+
 		if ( typeof this.config.entry === 'function' ) {
 			this.entriesFunctions.push( this.config.entry );
 		} else {
