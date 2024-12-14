@@ -1,6 +1,7 @@
 const path = require( 'node:path' );
 const glob = require( 'glob' );
 const fs = require( 'fs' );
+const browserslist = require( 'browserslist' );
 
 require( 'dotenv' ).config( {
 	path: [
@@ -14,6 +15,12 @@ require( 'dotenv' ).config( {
 		path.resolve( process.cwd(), '../../../.env' ),
 	],
 } );
+
+const browserslistConfig = browserslist.findConfig( process.cwd() );
+if ( ! browserslistConfig ) {
+	process.env.BROWSERSLIST =
+		'> 0.05% in US and last 3 years, not dead, not UCAndroid > 0, not OperaMini all, not and_qq > 0, not kaios > 0';
+}
 
 const [
 	defaultConfigWP,
