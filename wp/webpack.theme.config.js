@@ -30,7 +30,8 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 		const last = rule.use.length - 1;
 
 		rule.use[ last ].options.sassOptions = {
-			includePaths: [ resolve( rootPath, 'src/styles/partials' ) ],
+			loadPaths: [ resolve( rootPath, 'src/styles/partials' ) ],
+			silenceDeprecations: [ 'mixed-decls' ],
 		};
 	} )
 	.removePlugin( RtlCssPlugin )
