@@ -1,10 +1,14 @@
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
-const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
+const RtlCssPlugin = require( '@wordpress/scripts/plugins/rtlcss-webpack-plugin' );
 const CleanWebpackPlugin = require( '../helpers/clean-webpack-plugin' );
 const SyncWebpackPlugin = require( '../helpers/sync-webpack-plugin' );
 const { resolve } = require( 'node:path' );
-const { Config, defaultConfigWP, modulesConfigWP } = require( '../helpers/webpack' );
+const {
+	Config,
+	defaultConfigWP,
+	modulesConfigWP,
+} = require( '../helpers/webpack' );
 const findFreePort = require( 'find-free-port-sync' );
 const rootPath = process.cwd().replace( /\\/g, '/' );
 const outputPath = process.env.WP_CONTENT_DIR

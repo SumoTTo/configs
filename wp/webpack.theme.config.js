@@ -1,6 +1,6 @@
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
-const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
+const RtlCssPlugin = require( '@wordpress/scripts/plugins/rtlcss-webpack-plugin' );
 const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
 const SyncWebpackPlugin = require( '../helpers/sync-webpack-plugin' );
 const CleanWebpackPlugin = require( '../helpers/clean-webpack-plugin' );

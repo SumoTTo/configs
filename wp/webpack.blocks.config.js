@@ -1,5 +1,5 @@
 const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
-const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
+const RtlCssPlugin = require( '@wordpress/scripts/plugins/rtlcss-webpack-plugin' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const SyncDirectoryWebpackPlugin = require( '../helpers/sync-directory-webpack-plugin' );
 const CleanWebpackPlugin = require( '../helpers/clean-webpack-plugin' );

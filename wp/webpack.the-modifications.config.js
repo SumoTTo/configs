@@ -1,4 +1,4 @@
-const RtlCssPlugin = require( 'rtlcss-webpack-plugin' );
+const RtlCssPlugin = require( '@wordpress/scripts/plugins/rtlcss-webpack-plugin' );
 const glob = require( 'glob' );
 const path = require( 'path' );
 
