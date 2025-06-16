@@ -2,7 +2,11 @@ const WRAP_SELECTOR = ':is(.is-root-container,.wp-site-blocks)';
 
 function isRoot( selector ) {
 	for ( const root of [ 'html', 'body', ':root', ':host' ] ) {
-		if ( root === selector || selector.startsWith( root + ' ' ) ) {
+		if (
+			root === selector ||
+			selector.startsWith( root + ' ' ) ||
+			selector.startsWith( root + ':' )
+		) {
 			return true;
 		}
 	}
