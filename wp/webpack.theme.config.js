@@ -23,7 +23,7 @@ const port =
 const defaultConfig = new Config( defaultConfigWP, 'default', port )
 	.resetEntries()
 	.addEntries(
-		'src/styles/{*.{pc,sc,sa,c}ss,{blocks,variations,patterns}/**/*.{pc,sc,sa,c}ss}'
+		'src/styles/{*.{pc,sc,sa,c}ss,{blocks,variations,patterns,shortcodes}/**/*.{pc,sc,sa,c}ss}'
 	)
 	.addEntries( 'src/scripts/*.{j,t}s' )
 	.changeRule( '/\\.(sc|sa)ss$/', ( rule ) => {
