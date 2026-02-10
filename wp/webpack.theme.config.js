@@ -5,15 +5,16 @@ const ImageMinimizerPlugin = require( 'image-minimizer-webpack-plugin' );
 const SyncWebpackPlugin = require( '../helpers/sync-webpack-plugin' );
 const CleanWebpackPlugin = require( '../helpers/clean-webpack-plugin' );
 const findFreePort = require( 'find-free-port-sync' );
-const { resolve } = require( 'node:path' );
+const { resolve, basename } = require( 'node:path' );
 const {
 	Config,
 	defaultConfigWP,
 	modulesConfigWP,
 } = require( '../helpers/webpack' );
 const rootPath = process.cwd().replace( /\\/g, '/' );
+const themeName = basename( rootPath );
 const outputPath = process.env.WP_CONTENT_DIR
-	? resolve( process.env.WP_CONTENT_DIR, 'themes/theme-child' )
+	? resolve( process.env.WP_CONTENT_DIR, 'themes', themeName )
 	: rootPath;
 
 const port =
