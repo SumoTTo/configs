@@ -3,6 +3,7 @@ const glob = require( 'glob' );
 const path = require( 'path' );
 
 require( 'dotenv' ).config( {
+	quiet: true,
 	path: [
 		path.resolve( process.cwd(), '.env.local' ),
 		path.resolve( process.cwd(), '.env' ),
