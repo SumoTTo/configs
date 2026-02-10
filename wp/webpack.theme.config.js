@@ -84,14 +84,8 @@ const defaultConfig = new Config( defaultConfigWP, 'default', port )
 						encodeOptions: {
 							multipass: true,
 							plugins: [
-								{
-									name: 'preset-default',
-									params: {
-										overrides: {
-											removeViewBox: false,
-										},
-									},
-								},
+								'preset-default',
+								'removeTitle',
 								{
 									name: 'addAttributesToSVGElement',
 									params: {
